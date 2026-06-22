@@ -27,9 +27,9 @@ while IFS=$'\t' read -r env displayName branch valueSet; do
         ok "  created '$displayName' ($wsId)."
     fi
 
-    # Assign capacity (idempotent).
+    # Assign capacity (idempotent). assignToCapacity returns 202 fire-and-forget.
     capBody="$(jq -n --arg cap "$(cfg '.capacityId')" '{capacityId:$cap}')"
-    if fabric_api POST "/workspaces/$wsId/assignToCapacity" "$capBody" >/dev/null 2>&1; then
+    if fabric_api POST "/workspaces/$wsId/assignToCapacity" "$capBody" >/dev/null; then
         echo "    capacity assigned."
     else
         warn "    capacity assignment skipped (already assigned or insufficient permission)."

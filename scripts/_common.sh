@@ -145,16 +145,29 @@ fabric_api() {
         [[ "$retry" =~ ^[0-9]+$ ]] || retry=5
         rm -f "$hfile" "$bfile"
 
-        while true; do
-            sleep "$(( retry > 3 ? retry : 3 ))"
-            local op_status
-            op_status="$(curl -sS -X GET "$op_url" -H "Authorization: Bearer $FABRIC_TOKEN" | jq -r '.status // empty')"
-            printf '    ...operation status: %s\n' "${op_status:-unknown}" >&2
+        # Some 202 responses (e.g. assignToCapacity) are fire-and-forget and
+        # return no operation URL to poll. Treat them as accepted.
+        if [[ -z "$op_url" ]]; then
+            return 0
+        fi
+
+        local attempts=0 max_attempts=120 wait_s
+        wait_s="$(( retry > 3 ? retry : 3 ))"
+        while (( attempts < max_attempts )); do
+            sleep "$wait_s"
+            attempts=$(( attempts + 1 ))
+            local op_status opfile op_http
+            opfile="$(mktemp)"
+            op_http="$(curl -sS -o "$opfile" -w '%{http_code}' -X GET "$op_url" \
+                -H "Authorization: Bearer $FABRIC_TOKEN" || echo 000)"
+            op_status="$(jq -r '.status // empty' "$opfile" 2>/dev/null || true)"
+            rm -f "$opfile"
+            printf '    ...operation status: %s\n' "${op_status:-pending}" >&2
             case "$op_status" in
                 Succeeded|Completed)
-                    local r rstatus
+                    local rstatus rfile
                     rfile="$(mktemp)"
-                    rstatus="$(curl -sS -D /dev/null -o "$rfile" -w '%{http_code}' -X GET "${op_url}/result" -H "Authorization: Bearer $FABRIC_TOKEN")"
+                    rstatus="$(curl -sS -D /dev/null -o "$rfile" -w '%{http_code}' -X GET "${op_url}/result" -H "Authorization: Bearer $FABRIC_TOKEN" || echo 000)"
                     if [[ "$rstatus" -lt 400 && -s "$rfile" ]]; then cat "$rfile"; fi
                     rm -f "$rfile"
                     return 0
@@ -164,8 +177,15 @@ fabric_api() {
                     return 1
                     ;;
             esac
+            # If the status URL itself errors (e.g. 404) there is nothing to poll.
+            if [[ "$op_http" == "404" || "$op_http" == "000" ]]; then
+                return 0
+            fi
         done
+        echo "Fabric operation timed out after $max_attempts polls: $op_url" >&2
+        return 1
     fi
+
 
     cat "$bfile"
     rm -f "$hfile" "$bfile"

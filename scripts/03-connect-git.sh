@@ -38,10 +38,16 @@ while IFS=$'\t' read -r env displayName branch valueSet; do
             },
             myGitCredentials: { source: "ConfiguredConnection", connectionId: $conn }
         }')"
-    if fabric_api POST "/workspaces/$wsId/git/connect" "$connectBody" >/dev/null 2>&1; then
+    # 3a. Connect. Capture the response so a genuine failure is surfaced
+    # instead of being silently treated as "already connected".
+    connectOut=""
+    if connectOut="$(fabric_api POST "/workspaces/$wsId/git/connect" "$connectBody" 2>&1)"; then
         echo "  connected."
+    elif grep -qiE 'already connected|AlreadyConnected|WorkspaceAlreadyConnectedToGit' <<<"$connectOut"; then
+        warn "  already connected."
     else
-        warn "  connect skipped (likely already connected)."
+        echo "$connectOut" >&2
+        die "  git/connect failed for '$displayName'. Check the GitHub PAT/connection (run 02-create-git-connection.sh) and that the repo + branch '$branch' exist."
     fi
 
     # 3b. Initialize the connection (decide direction).
