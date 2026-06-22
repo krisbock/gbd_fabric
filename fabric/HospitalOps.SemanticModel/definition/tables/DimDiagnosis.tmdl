@@ -1,0 +1,26 @@
+table DimDiagnosis
+
+	column DiagnosisKey
+		dataType: int64
+		sourceColumn: DiagnosisKey
+		summarizeBy: none
+
+	column DiagnosisName
+		dataType: string
+		sourceColumn: DiagnosisName
+		summarizeBy: none
+
+	column DiagnosisCategory
+		dataType: string
+		sourceColumn: DiagnosisCategory
+		summarizeBy: none
+
+	partition DimDiagnosis = m
+		mode: import
+		source = ```
+				let
+				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
+				    Data = Source{[Schema="dbo",Item="dim_diagnosis"]}[Data]
+				in
+				    Data
+				```

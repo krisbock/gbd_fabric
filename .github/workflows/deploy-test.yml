@@ -1,0 +1,32 @@
+name: Deploy to Test
+
+# Promote to the Healthcare-Test workspace whenever Fabric item definitions
+# change on the test branch (i.e. after a dev -> test PR is merged).
+on:
+  push:
+    branches: [test]
+    paths:
+      - 'fabric/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-test:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync Healthcare-Test from Git and set environment
+        shell: bash
+        env:
+          FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+          FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+          FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+          WORKSPACE_ID: ${{ secrets.TEST_WORKSPACE_ID }}
+          VALUE_SET: Test
+          RUN_ETL: 'true'
+        run: ./scripts/ci-deploy.sh

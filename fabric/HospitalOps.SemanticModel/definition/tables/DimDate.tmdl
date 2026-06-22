@@ -1,0 +1,51 @@
+table DimDate
+
+	column DateKey
+		dataType: int64
+		sourceColumn: DateKey
+		summarizeBy: none
+
+	column Date
+		dataType: string
+		sourceColumn: Date
+		summarizeBy: none
+
+	column Year
+		dataType: int64
+		sourceColumn: Year
+		summarizeBy: none
+
+	column Month
+		dataType: int64
+		sourceColumn: Month
+		summarizeBy: none
+
+	column MonthName
+		dataType: string
+		sourceColumn: MonthName
+		summarizeBy: none
+
+	column Day
+		dataType: int64
+		sourceColumn: Day
+		summarizeBy: none
+
+	column DayOfWeek
+		dataType: string
+		sourceColumn: DayOfWeek
+		summarizeBy: none
+
+	column IsWeekend
+		dataType: boolean
+		sourceColumn: IsWeekend
+		summarizeBy: none
+
+	partition DimDate = m
+		mode: import
+		source = ```
+				let
+				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
+				    Data = Source{[Schema="dbo",Item="dim_date"]}[Data]
+				in
+				    Data
+				```

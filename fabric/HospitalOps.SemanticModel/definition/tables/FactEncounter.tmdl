@@ -1,0 +1,69 @@
+table FactEncounter
+
+	measure 'Total Encounters' = COUNTROWS(FactEncounter)
+		formatString: #,0
+
+	measure 'Avg Length of Stay' = AVERAGE(FactEncounter[LengthOfStayDays])
+		formatString: #,0.0
+
+	measure 'Readmission Rate %' = DIVIDE(CALCULATE(COUNTROWS(FactEncounter), FactEncounter[IsReadmission] = TRUE()), COUNTROWS(FactEncounter))
+		formatString: 0.0%
+
+	measure 'Total Charges' = SUM(FactEncounter[TotalCharges])
+		formatString: \$#,0
+
+	column EncounterKey
+		dataType: int64
+		sourceColumn: EncounterKey
+		summarizeBy: none
+		isHidden
+
+	column DateKey
+		dataType: int64
+		sourceColumn: DateKey
+		summarizeBy: none
+
+	column PatientKey
+		dataType: int64
+		sourceColumn: PatientKey
+		summarizeBy: none
+
+	column ProviderKey
+		dataType: int64
+		sourceColumn: ProviderKey
+		summarizeBy: none
+
+	column DepartmentKey
+		dataType: int64
+		sourceColumn: DepartmentKey
+		summarizeBy: none
+
+	column DiagnosisKey
+		dataType: int64
+		sourceColumn: DiagnosisKey
+		summarizeBy: none
+
+	column LengthOfStayDays
+		dataType: int64
+		sourceColumn: LengthOfStayDays
+		summarizeBy: sum
+
+	column IsReadmission
+		dataType: boolean
+		sourceColumn: IsReadmission
+		summarizeBy: none
+
+	column TotalCharges
+		dataType: double
+		sourceColumn: TotalCharges
+		summarizeBy: sum
+
+	partition FactEncounter = m
+		mode: import
+		source = ```
+				let
+				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
+				    Data = Source{[Schema="dbo",Item="fact_encounter"]}[Data]
+				in
+				    Data
+				```

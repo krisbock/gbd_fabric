@@ -1,0 +1,34 @@
+name: Deploy to Prod
+
+# Promote to the Healthcare-Prod workspace whenever Fabric item definitions
+# change on main (i.e. after a test -> main PR is merged).
+# The 'prod' environment should have a required reviewer configured in
+# GitHub > Settings > Environments so this step waits for manual approval.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fabric/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment: prod   # add a required reviewer here for a manual approval gate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync Healthcare-Prod from Git and set environment
+        shell: bash
+        env:
+          FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+          FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+          FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+          WORKSPACE_ID: ${{ secrets.PROD_WORKSPACE_ID }}
+          VALUE_SET: Prod
+          RUN_ETL: 'true'
+        run: ./scripts/ci-deploy.sh

@@ -1,0 +1,26 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.python-version
+
+# ---- Local data artifacts (generated CSVs are reproducible) ----
+data/generated/
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.swp
+
+# ---- Secrets (never commit) ----
+*.secret
+*.pem
+*.pfx
+local.settings.json
+.fabric-demo.env
+scripts/config.json
+scripts/.state.json
+
+# NOTE: do NOT ignore the fabric/ folder — those are versioned item definitions.

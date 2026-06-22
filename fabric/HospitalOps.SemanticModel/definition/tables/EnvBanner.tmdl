@@ -1,0 +1,46 @@
+table EnvBanner
+
+	column EnvironmentName
+		dataType: string
+		sourceColumn: EnvironmentName
+		summarizeBy: none
+
+	column RowMultiplier
+		dataType: int64
+		sourceColumn: RowMultiplier
+		summarizeBy: sum
+
+	column RefreshWindowDays
+		dataType: int64
+		sourceColumn: RefreshWindowDays
+		summarizeBy: sum
+
+	column EncounterCount
+		dataType: int64
+		sourceColumn: EncounterCount
+		summarizeBy: sum
+
+	column PatientCount
+		dataType: int64
+		sourceColumn: PatientCount
+		summarizeBy: sum
+
+	column ReadmissionRatePct
+		dataType: double
+		sourceColumn: ReadmissionRatePct
+		summarizeBy: none
+
+	column LoadTimestampUtc
+		dataType: string
+		sourceColumn: LoadTimestampUtc
+		summarizeBy: none
+
+	partition EnvBanner = m
+		mode: import
+		source = ```
+				let
+				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
+				    Data = Source{[Schema="dbo",Item="env_banner"]}[Data]
+				in
+				    Data
+				```

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
+  "variables": [
+    {
+      "name": "EnvironmentName",
+      "note": "Friendly environment label written to the env_banner table and shown on the report.",
+      "type": "String",
+      "value": "Development"
+    },
+    {
+      "name": "RowMultiplier",
+      "note": "Scales the volume of synthetic data the ETL notebook generates (Dev=1, Test=5, Prod=20).",
+      "type": "String",
+      "value": "1"
+    },
+    {
+      "name": "RefreshWindowDays",
+      "note": "Number of days of encounters to generate/refresh (Dev=30, Test=90, Prod=365).",
+      "type": "String",
+      "value": "30"
+    }
+  ]
+}

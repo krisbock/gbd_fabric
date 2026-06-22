@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/valueSet/1.0.0/schema.json",
+  "name": "Test",
+  "variableOverrides": [
+    {
+      "name": "EnvironmentName",
+      "value": "Test"
+    },
+    {
+      "name": "RowMultiplier",
+      "value": "5"
+    },
+    {
+      "name": "RefreshWindowDays",
+      "value": "90"
+    }
+  ]
+}

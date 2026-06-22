@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "HospitalETL",
+    "description": "Generates the healthcare star schema and the env_banner table. Resolves the Healthcare lakehouse by name and reads the EnvConfig variable library, so it is portable across all four workspaces with no rebinding."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2c3d4e5f-6a7b-8c9d-0e1f-2a3b4c5d6e7f"
+  }
+}

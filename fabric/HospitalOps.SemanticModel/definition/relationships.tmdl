@@ -1,0 +1,11 @@
+relationship 9a1b2c3d-0001-4000-8000-000000000001
+	fromColumn: FactEncounter.DepartmentKey
+	toColumn: DimDepartment.DepartmentKey
+
+relationship 9a1b2c3d-0002-4000-8000-000000000002
+	fromColumn: FactEncounter.DiagnosisKey
+	toColumn: DimDiagnosis.DiagnosisKey
+
+relationship 9a1b2c3d-0003-4000-8000-000000000003
+	fromColumn: FactEncounter.DateKey
+	toColumn: DimDate.DateKey

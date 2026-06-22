@@ -1,0 +1,32 @@
+name: Deploy to Dev
+
+# Promote to the Healthcare-Dev workspace whenever Fabric item definitions
+# change on the dev branch (i.e. after a feature -> dev PR is merged).
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'fabric/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync Healthcare-Dev from Git and set environment
+        shell: bash
+        env:
+          FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+          FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+          FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+          WORKSPACE_ID: ${{ secrets.DEV_WORKSPACE_ID }}
+          VALUE_SET: Dev
+          RUN_ETL: 'true'
+        run: ./scripts/ci-deploy.sh

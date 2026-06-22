@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "HospitalOps",
+    "description": "Hospital operations report. Bound to the HospitalOps semantic model by relative path."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "5f6a7b8c-9d0e-1f2a-3b4c-5d6e7f8091a2"
+  }
+}
