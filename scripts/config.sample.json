@@ -3,6 +3,7 @@
   "clientId": "00000000-0000-0000-0000-000000000000",
   "clientSecret": "REPLACE_OR_USE_AZ_CLI",
   "capacityId": "00000000-0000-0000-0000-000000000000",
+  "contributorGroupId": "00000000-0000-0000-0000-000000000000",
   "gitHub": {
     "ownerName": "your-org-or-user",
     "repositoryName": "gbd_fabric",
