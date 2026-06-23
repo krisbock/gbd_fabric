@@ -2,50 +2,50 @@ table DimDate
 
 	column DateKey
 		dataType: int64
-		sourceColumn: DateKey
 		summarizeBy: none
+		sourceColumn: DateKey
 
 	column Date
 		dataType: string
-		sourceColumn: Date
 		summarizeBy: none
+		sourceColumn: Date
 
 	column Year
 		dataType: int64
-		sourceColumn: Year
 		summarizeBy: none
+		sourceColumn: Year
 
 	column Month
 		dataType: int64
-		sourceColumn: Month
 		summarizeBy: none
+		sourceColumn: Month
 
 	column MonthName
 		dataType: string
-		sourceColumn: MonthName
 		summarizeBy: none
+		sourceColumn: MonthName
 
 	column Day
 		dataType: int64
-		sourceColumn: Day
 		summarizeBy: none
+		sourceColumn: Day
 
 	column DayOfWeek
 		dataType: string
-		sourceColumn: DayOfWeek
 		summarizeBy: none
+		sourceColumn: DayOfWeek
 
 	column IsWeekend
 		dataType: boolean
-		sourceColumn: IsWeekend
 		summarizeBy: none
+		sourceColumn: IsWeekend
 
 	partition DimDate = m
 		mode: import
-		source = ```
+		source =
 				let
 				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
 				    Data = Source{[Schema="dbo",Item="dim_date"]}[Data]
 				in
 				    Data
-				```
+

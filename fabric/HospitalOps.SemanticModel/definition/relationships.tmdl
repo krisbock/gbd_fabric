@@ -9,3 +9,4 @@ relationship 9a1b2c3d-0002-4000-8000-000000000002
 relationship 9a1b2c3d-0003-4000-8000-000000000003
 	fromColumn: FactEncounter.DateKey
 	toColumn: DimDate.DateKey
+

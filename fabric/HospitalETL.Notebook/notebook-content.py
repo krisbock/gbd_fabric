@@ -13,7 +13,6 @@
 
 # ### HospitalETL
 # Generates a small hospital-operations star schema into the **Healthcare** lakehouse.
-#
 # This notebook is **environment-aware** and **portable**:
 # * It reads the **EnvConfig** variable library for `EnvironmentName`, `RowMultiplier`
 #   and `RefreshWindowDays` (different per workspace via the active value set).

@@ -14,56 +14,56 @@ table FactEncounter
 
 	column EncounterKey
 		dataType: int64
-		sourceColumn: EncounterKey
-		summarizeBy: none
 		isHidden
+		summarizeBy: none
+		sourceColumn: EncounterKey
 
 	column DateKey
 		dataType: int64
-		sourceColumn: DateKey
 		summarizeBy: none
+		sourceColumn: DateKey
 
 	column PatientKey
 		dataType: int64
-		sourceColumn: PatientKey
 		summarizeBy: none
+		sourceColumn: PatientKey
 
 	column ProviderKey
 		dataType: int64
-		sourceColumn: ProviderKey
 		summarizeBy: none
+		sourceColumn: ProviderKey
 
 	column DepartmentKey
 		dataType: int64
-		sourceColumn: DepartmentKey
 		summarizeBy: none
+		sourceColumn: DepartmentKey
 
 	column DiagnosisKey
 		dataType: int64
-		sourceColumn: DiagnosisKey
 		summarizeBy: none
+		sourceColumn: DiagnosisKey
 
 	column LengthOfStayDays
 		dataType: int64
-		sourceColumn: LengthOfStayDays
 		summarizeBy: sum
+		sourceColumn: LengthOfStayDays
 
 	column IsReadmission
 		dataType: boolean
-		sourceColumn: IsReadmission
 		summarizeBy: none
+		sourceColumn: IsReadmission
 
 	column TotalCharges
 		dataType: double
-		sourceColumn: TotalCharges
 		summarizeBy: sum
+		sourceColumn: TotalCharges
 
 	partition FactEncounter = m
 		mode: import
-		source = ```
+		source =
 				let
 				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
 				    Data = Source{[Schema="dbo",Item="fact_encounter"]}[Data]
 				in
 				    Data
-				```
+
