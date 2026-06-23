@@ -12,6 +12,9 @@ table FactEncounter
 	measure 'Total Charges' = SUM(FactEncounter[TotalCharges])
 		formatString: \$#,0
 
+	measure 'Patient Count' = DISTINCTCOUNT(FactEncounter[PatientKey])
+		formatString: #,0
+
 	column EncounterKey
 		dataType: int64
 		isHidden

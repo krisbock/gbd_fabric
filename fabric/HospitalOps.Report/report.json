@@ -11,7 +11,17 @@
       "height": 720,
       "displayOption": 1,
       "config": "{}",
-      "visualContainers": []
+      "visualContainers": [
+        {
+          "x": 40,
+          "y": 40,
+          "z": 0,
+          "width": 600,
+          "height": 400,
+          "config": "{\"name\":\"patientCountByDept\",\"layouts\":[{\"id\":0,\"position\":{\"x\":40,\"y\":40,\"z\":0,\"width\":600,\"height\":400,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"clusteredColumnChart\",\"projections\":{\"Category\":[{\"queryRef\":\"DimDepartment.DepartmentName\"}],\"Y\":[{\"queryRef\":\"FactEncounter.Patient Count\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"DimDepartment\",\"Type\":0},{\"Name\":\"f\",\"Entity\":\"FactEncounter\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"DepartmentName\"},\"Name\":\"DimDepartment.DepartmentName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"f\"}},\"Property\":\"Patient Count\"},\"Name\":\"FactEncounter.Patient Count\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Patient Count by Department'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
     }
   ]
 }
