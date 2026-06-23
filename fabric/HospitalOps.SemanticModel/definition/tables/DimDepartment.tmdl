@@ -2,20 +2,20 @@ table DimDepartment
 
 	column DepartmentKey
 		dataType: int64
-		sourceColumn: DepartmentKey
 		summarizeBy: none
+		sourceColumn: DepartmentKey
 
 	column DepartmentName
 		dataType: string
-		sourceColumn: DepartmentName
 		summarizeBy: none
+		sourceColumn: DepartmentName
 
 	partition DimDepartment = m
 		mode: import
-		source = ```
+		source =
 				let
 				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
 				    Data = Source{[Schema="dbo",Item="dim_department"]}[Data]
 				in
 				    Data
-				```
+

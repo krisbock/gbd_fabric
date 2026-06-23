@@ -2,25 +2,25 @@ table DimDiagnosis
 
 	column DiagnosisKey
 		dataType: int64
-		sourceColumn: DiagnosisKey
 		summarizeBy: none
+		sourceColumn: DiagnosisKey
 
 	column DiagnosisName
 		dataType: string
-		sourceColumn: DiagnosisName
 		summarizeBy: none
+		sourceColumn: DiagnosisName
 
 	column DiagnosisCategory
 		dataType: string
-		sourceColumn: DiagnosisCategory
 		summarizeBy: none
+		sourceColumn: DiagnosisCategory
 
 	partition DimDiagnosis = m
 		mode: import
-		source = ```
+		source =
 				let
 				    Source = Sql.Database(SqlEndpoint, SqlDatabase),
 				    Data = Source{[Schema="dbo",Item="dim_diagnosis"]}[Data]
 				in
 				    Data
-				```
+
