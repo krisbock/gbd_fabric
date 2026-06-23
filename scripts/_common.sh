@@ -93,12 +93,16 @@ get_fabric_token() {
     cid="${FABRIC_CLIENT_ID:-$(cfg '.clientId')}"
     sec="${FABRIC_CLIENT_SECRET:-$(cfg '.clientSecret')}"
 
-    FABRIC_TOKEN="$(curl -sS -X POST "https://login.microsoftonline.com/${tid}/oauth2/v2.0/token" \
+    local resp
+    resp="$(curl -sS -X POST "https://login.microsoftonline.com/${tid}/oauth2/v2.0/token" \
         --data-urlencode "client_id=${cid}" \
         --data-urlencode "client_secret=${sec}" \
         --data-urlencode "scope=https://api.fabric.microsoft.com/.default" \
-        --data-urlencode "grant_type=client_credentials" | jq -r '.access_token')"
-    [[ -n "$FABRIC_TOKEN" && "$FABRIC_TOKEN" != "null" ]] || die "Failed to acquire Fabric token (check tenant/client/secret)."
+        --data-urlencode "grant_type=client_credentials")"
+    FABRIC_TOKEN="$(jq -r '.access_token // empty' <<<"$resp" 2>/dev/null)"
+    if [[ -z "$FABRIC_TOKEN" ]]; then
+        die "Failed to acquire Fabric token: $(jq -r '"\(.error // "unknown") - \(.error_description // "no detail" | .[0:200])"' <<<"$resp" 2>/dev/null)"
+    fi
 }
 
 # ---------------------------------------------------------------------------

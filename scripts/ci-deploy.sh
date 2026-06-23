@@ -21,6 +21,7 @@ done
 trim() { printf '%s' "$1" | tr -d '[:space:]'; }
 wsId="$(trim "$WORKSPACE_ID")"
 valueSet="$(trim "$VALUE_SET")"
+echo "input lengths: tenant=${#FABRIC_TENANT_ID} client=${#FABRIC_CLIENT_ID} secret=${#FABRIC_CLIENT_SECRET} ws=${#wsId}"
 get_fabric_token   # uses FABRIC_* env vars
 
 echo "::group::Update workspace $wsId from Git"
