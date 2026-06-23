@@ -16,8 +16,11 @@ for v in FABRIC_CLIENT_ID FABRIC_CLIENT_SECRET FABRIC_TENANT_ID WORKSPACE_ID VAL
     [[ -n "${!v:-}" ]] || die "Missing required env var: $v"
 done
 
-wsId="$WORKSPACE_ID"
-valueSet="$VALUE_SET"
+# Strip any stray whitespace/carriage returns (a trailing \r from a CRLF-sourced
+# secret would otherwise corrupt every Fabric REST URL and yield HTTP 400).
+trim() { printf '%s' "$1" | tr -d '[:space:]'; }
+wsId="$(trim "$WORKSPACE_ID")"
+valueSet="$(trim "$VALUE_SET")"
 get_fabric_token   # uses FABRIC_* env vars
 
 echo "::group::Update workspace $wsId from Git"

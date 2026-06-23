@@ -32,6 +32,9 @@ slug="$owner/$repo"
 # set_secret NAME VALUE  -> uploads a repo secret unless the value is empty/placeholder.
 set_secret() {
     local name="$1" value="$2"
+    # Strip stray whitespace/carriage returns so a CRLF-sourced value never leaks
+    # a trailing \r into the secret (which would corrupt Fabric REST URLs in CI).
+    value="$(printf '%s' "$value" | tr -d '[:space:]')"
     if [[ -z "$value" || "$value" == "null" \
         || "$value" == "REPLACE_OR_USE_AZ_CLI" \
         || "$value" == "00000000-0000-0000-0000-000000000000" ]]; then

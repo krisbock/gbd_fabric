@@ -1,0 +1,5 @@
+# Force LF for shell scripts and JSON so values read via command substitution
+# never pick up a stray carriage return on Windows/autocrlf checkouts. A trailing
+# \r in a workspace-ID secret makes every Fabric REST URL invalid (HTTP 400).
+*.sh   text eol=lf
+*.json text eol=lf
