@@ -41,7 +41,7 @@ set_secret() {
         warn "  skipping $name (value not set in config.json/.state.json)."
         return
     fi
-    if printf '%s' "$value" | gh secret set "$name" --repo "$slug" --body - >/dev/null 2>&1; then
+    if gh secret set "$name" --repo "$slug" --body "$value" >/dev/null 2>&1; then
         ok "  set $name."
     else
         die "  failed to set $name on $slug (check the PAT has 'repo' + secrets access)."
