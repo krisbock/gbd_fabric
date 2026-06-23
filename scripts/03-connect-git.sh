@@ -38,7 +38,7 @@ while IFS=$'\t' read -r env displayName branch valueSet; do
             },
             myGitCredentials: { source: "ConfiguredConnection", connectionId: $conn }
         }')"
-    # 3a. Connect. Capture the response so a genuine failure is surfaced
+    # Connect. Capture the response so a genuine failure is surfaced
     # instead of being silently treated as "already connected".
     connectOut=""
     if connectOut="$(fabric_api POST "/workspaces/$wsId/git/connect" "$connectBody" 2>&1)"; then
@@ -50,18 +50,38 @@ while IFS=$'\t' read -r env displayName branch valueSet; do
         die "  git/connect failed for '$displayName'. Check the GitHub PAT/connection (run 02-create-git-connection.sh) and that the repo + branch '$branch' exist."
     fi
 
-    # 3b. Initialize the connection (decide direction).
+    # 3b. Initialize the connection (decide direction). If it was already
+    # initialized on a previous run, fall back to git/status for the hashes.
     initBody='{"initializationStrategy":"PreferRemote"}'
-    init="$(fabric_api POST "/workspaces/$wsId/git/initializeConnection" "$initBody")"
-    requiredAction="$(jq -r '.requiredAction // empty' <<<"$init")"
+    requiredAction=""
+    remoteCommitHash=""
+    workspaceHead=""
+    if initOut="$(fabric_api POST "/workspaces/$wsId/git/initializeConnection" "$initBody" 2>&1)"; then
+        requiredAction="$(jq -r '.requiredAction // empty' <<<"$initOut")"
+        remoteCommitHash="$(jq -r '.remoteCommitHash // empty' <<<"$initOut")"
+        workspaceHead="$(jq -r '.workspaceHead // empty' <<<"$initOut")"
+    elif grep -qiE 'AlreadyInitialized|already been initialized' <<<"$initOut"; then
+        warn "  connection already initialized; checking Git status..."
+        status="$(fabric_api GET "/workspaces/$wsId/git/status")"
+        remoteCommitHash="$(jq -r '.remoteCommitHash // empty' <<<"$status")"
+        workspaceHead="$(jq -r '.workspaceHead // empty' <<<"$status")"
+        if [[ -n "$remoteCommitHash" && "$remoteCommitHash" != "$workspaceHead" ]]; then
+            requiredAction="UpdateFromGit"
+        else
+            requiredAction="None"
+        fi
+    else
+        echo "$initOut" >&2
+        die "  git/initializeConnection failed for '$displayName'."
+    fi
     echo "  initialize: RequiredAction = ${requiredAction:-none}"
 
     # 3c. Pull the branch content into the workspace if needed.
     if [[ "$requiredAction" == "UpdateFromGit" ]]; then
         echo "  updating workspace from Git..."
         updBody="$(jq -n \
-            --arg rc "$(jq -r '.remoteCommitHash // empty' <<<"$init")" \
-            --arg wh "$(jq -r '.workspaceHead // empty' <<<"$init")" '{
+            --arg rc "$remoteCommitHash" \
+            --arg wh "$workspaceHead" '{
                 remoteCommitHash: $rc,
                 workspaceHead: $wh,
                 conflictResolution: { conflictResolutionType: "Workspace", conflictResolutionPolicy: "PreferRemote" },
