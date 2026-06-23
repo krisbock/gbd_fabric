@@ -125,9 +125,17 @@ fabric_api() {
             -H "Authorization: Bearer $FABRIC_TOKEN" \
             -H "Content-Type: application/json" \
             --data "$body")"
-    else
+    elif [[ "$method" == "GET" ]]; then
         status="$(curl -sS -D "$hfile" -o "$bfile" -w '%{http_code}' -X "$method" "$url" \
             -H "Authorization: Bearer $FABRIC_TOKEN")"
+    else
+        # Bodyless POST/PUT/PATCH/DELETE: send an explicit empty body so curl
+        # emits Content-Length: 0. Without it some Fabric endpoints (e.g.
+        # getDefinition) return HTTP 411 Length Required.
+        status="$(curl -sS -D "$hfile" -o "$bfile" -w '%{http_code}' -X "$method" "$url" \
+            -H "Authorization: Bearer $FABRIC_TOKEN" \
+            -H "Content-Length: 0" \
+            --data '')"
     fi
 
     if [[ "$status" -ge 400 ]]; then
@@ -189,6 +197,62 @@ fabric_api() {
 
     cat "$bfile"
     rm -f "$hfile" "$bfile"
+}
+
+# ---------------------------------------------------------------------------
+# Power BI REST API (api.powerbi.com) — needed for binding a semantic model's
+# data source to a cloud connection. Power BI endpoints require a token with
+# the Power BI audience, which is distinct from the Fabric token.
+# ---------------------------------------------------------------------------
+PBI_API="https://api.powerbi.com/v1.0/myorg"
+
+# get_powerbi_token  -> sets PBI_TOKEN (mirrors get_fabric_token's auth modes).
+get_powerbi_token() {
+    local auth="${FABRIC_AUTH:-sp}"
+    if [[ "$auth" == "azcli" ]]; then
+        command -v az >/dev/null 2>&1 || die "Azure CLI ('az') not found. Run 'az login' or use service principal auth."
+        PBI_TOKEN="$(az account get-access-token --resource "https://analysis.windows.net/powerbi/api" --query accessToken -o tsv 2>/dev/null || true)"
+        [[ -n "$PBI_TOKEN" ]] || die "Could not get a Power BI token via Azure CLI. Run 'az login' first, or use service principal auth."
+        return
+    fi
+
+    local tid cid sec
+    tid="${FABRIC_TENANT_ID:-$(cfg '.tenantId')}"
+    cid="${FABRIC_CLIENT_ID:-$(cfg '.clientId')}"
+    sec="${FABRIC_CLIENT_SECRET:-$(cfg '.clientSecret')}"
+
+    PBI_TOKEN="$(curl -sS -X POST "https://login.microsoftonline.com/${tid}/oauth2/v2.0/token" \
+        --data-urlencode "client_id=${cid}" \
+        --data-urlencode "client_secret=${sec}" \
+        --data-urlencode "scope=https://analysis.windows.net/powerbi/api/.default" \
+        --data-urlencode "grant_type=client_credentials" | jq -r '.access_token')"
+    [[ -n "$PBI_TOKEN" && "$PBI_TOKEN" != "null" ]] || die "Failed to acquire Power BI token (check tenant/client/secret)."
+}
+
+# pbi_api METHOD PATH [JSON_BODY]  -> prints the response body; nonzero on HTTP>=400.
+pbi_api() {
+    local method="$1" path="$2" body="${3:-}"
+    local url; if [[ "$path" == http* ]]; then url="$path"; else url="${PBI_API}${path}"; fi
+
+    local bfile status
+    bfile="$(mktemp)"
+    if [[ -n "$body" ]]; then
+        status="$(curl -sS -o "$bfile" -w '%{http_code}' -X "$method" "$url" \
+            -H "Authorization: Bearer $PBI_TOKEN" -H "Content-Type: application/json" --data "$body")"
+    elif [[ "$method" == "GET" ]]; then
+        status="$(curl -sS -o "$bfile" -w '%{http_code}' -X "$method" "$url" \
+            -H "Authorization: Bearer $PBI_TOKEN")"
+    else
+        status="$(curl -sS -o "$bfile" -w '%{http_code}' -X "$method" "$url" \
+            -H "Authorization: Bearer $PBI_TOKEN" -H "Content-Length: 0" --data '')"
+    fi
+
+    if [[ "$status" -ge 400 ]]; then
+        local content; content="$(cat "$bfile")"; rm -f "$bfile"
+        echo "Power BI API $method $path failed ($status): $content" >&2
+        return 1
+    fi
+    cat "$bfile"; rm -f "$bfile"
 }
 
 # ---------------------------------------------------------------------------
