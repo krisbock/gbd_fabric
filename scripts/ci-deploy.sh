@@ -21,14 +21,39 @@ valueSet="$VALUE_SET"
 get_fabric_token   # uses FABRIC_* env vars
 
 echo "::group::Update workspace $wsId from Git"
-init="$(fabric_api POST "/workspaces/$wsId/git/initializeConnection" '{"initializationStrategy":"PreferRemote"}')"
-requiredAction="$(jq -r '.requiredAction // empty' <<<"$init")"
+# The workspace was connected to Git once during setup (03-connect-git.sh), so its
+# connection is already initialized. initializeConnection only succeeds the first
+# time; on later runs it returns 400/AlreadyInitialized. Try it, and on any failure
+# fall back to git/status to read the commit hashes and decide whether to sync.
+requiredAction=""
+remoteCommitHash=""
+workspaceHead=""
+if init="$(fabric_api POST "/workspaces/$wsId/git/initializeConnection" '{"initializationStrategy":"PreferRemote"}' 2>&1)"; then
+    requiredAction="$(jq -r '.requiredAction // empty' <<<"$init")"
+    remoteCommitHash="$(jq -r '.remoteCommitHash // empty' <<<"$init")"
+    workspaceHead="$(jq -r '.workspaceHead // empty' <<<"$init")"
+else
+    echo "initializeConnection unavailable (likely already initialized); using git/status."
+    if status="$(fabric_api GET "/workspaces/$wsId/git/status" 2>&1)"; then
+        remoteCommitHash="$(jq -r '.remoteCommitHash // empty' <<<"$status")"
+        workspaceHead="$(jq -r '.workspaceHead // empty' <<<"$status")"
+        if [[ -n "$remoteCommitHash" && "$remoteCommitHash" != "$workspaceHead" ]]; then
+            requiredAction="UpdateFromGit"
+        else
+            requiredAction="None"
+        fi
+    else
+        echo "$init" >&2
+        echo "$status" >&2
+        die "Could not initialize or read Git status for workspace $wsId. Ensure it is connected to Git (run scripts/03-connect-git.sh once)."
+    fi
+fi
 echo "RequiredAction = ${requiredAction:-none}"
 
 if [[ "$requiredAction" == "UpdateFromGit" ]]; then
     updBody="$(jq -n \
-        --arg rc "$(jq -r '.remoteCommitHash // empty' <<<"$init")" \
-        --arg wh "$(jq -r '.workspaceHead // empty' <<<"$init")" '{
+        --arg rc "$remoteCommitHash" \
+        --arg wh "$workspaceHead" '{
             remoteCommitHash: $rc,
             workspaceHead: $wh,
             conflictResolution: { conflictResolutionType: "Workspace", conflictResolutionPolicy: "PreferRemote" },
