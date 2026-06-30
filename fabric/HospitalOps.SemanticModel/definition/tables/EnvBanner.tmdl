@@ -1,37 +1,45 @@
 table EnvBanner
+	lineageTag: 0729dec6-99bb-44a7-a91c-d07bcebbcd8a
 
 	column EnvironmentName
 		dataType: string
+		lineageTag: 9eabfe7c-e341-4656-8d20-746e721a99bd
 		summarizeBy: none
 		sourceColumn: EnvironmentName
 
 	column RowMultiplier
 		dataType: int64
+		lineageTag: 507d7196-d473-45d4-81ae-0fe01ca0d022
 		summarizeBy: sum
 		sourceColumn: RowMultiplier
 
 	column RefreshWindowDays
 		dataType: int64
+		lineageTag: c02c108b-dc98-42d1-859b-799c0a6ef6af
 		summarizeBy: sum
 		sourceColumn: RefreshWindowDays
 
 	column EncounterCount
 		dataType: int64
+		lineageTag: ebb308c3-3b53-4a58-be4e-71bcb6bbc880
 		summarizeBy: sum
 		sourceColumn: EncounterCount
 
 	column PatientCount
 		dataType: int64
+		lineageTag: 66a775bf-d457-415d-89e9-8f0a5b6edf08
 		summarizeBy: sum
 		sourceColumn: PatientCount
 
 	column ReadmissionRatePct
 		dataType: double
+		lineageTag: 65f5f631-fe1e-4051-8020-8843bf6f696a
 		summarizeBy: none
 		sourceColumn: ReadmissionRatePct
 
 	column LoadTimestampUtc
 		dataType: string
+		lineageTag: 3ef52540-164f-4bcb-bef1-7f81154db043
 		summarizeBy: none
 		sourceColumn: LoadTimestampUtc
 

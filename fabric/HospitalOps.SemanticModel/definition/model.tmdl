@@ -4,15 +4,14 @@ model Model
 	discourageImplicitMeasures
 	sourceQueryCulture: en-US
 
-annotation PBI_QueryOrder = ["SqlEndpoint","SqlDatabase","EnvBanner","FactEncounter","DimDepartment","DimDiagnosis","DimDate"]
+annotation PBI_QueryOrder = ["SqlEndpoint","SqlDatabase","EnvBanner","FactEncounter","DimDepartment","DimDate"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_ProTooling = ["TMDL-Extension"]
+annotation PBI_ProTooling = ["TMDL-Extension","WebModelingEdit"]
 
 ref table EnvBanner
 ref table FactEncounter
 ref table DimDepartment
-ref table DimDiagnosis
 ref table DimDate
 
