@@ -1,7 +1,9 @@
 /// SQL analytics endpoint of the Healthcare lakehouse for THIS workspace.
 /// Bound per workspace by scripts/bind-semanticmodel.sh (or set manually in Fabric).
 expression SqlEndpoint = "7yrclfq4z2nefpbsi4xd7kva24-ns7kn44mgwouzpkajdbqf7jyxe.datawarehouse.fabric.microsoft.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: f515f21a-96ee-4b87-90c6-b7d8f95fef61
 
 /// Database (lakehouse) name exposed by the SQL analytics endpoint.
 expression SqlDatabase = "Healthcare" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 33bf93e5-74b6-4490-9cae-9ee4a9738685
 

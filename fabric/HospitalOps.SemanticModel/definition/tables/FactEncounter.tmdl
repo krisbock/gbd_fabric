@@ -1,60 +1,82 @@
 table FactEncounter
+	lineageTag: 0a0b0a9a-ccf2-4ecc-a084-a1062800259c
 
 	measure 'Total Encounters' = COUNTROWS(FactEncounter)
 		formatString: #,0
+		lineageTag: bb81bdba-b39e-4196-9bd5-87db0f579edb
 
 	measure 'Avg Length of Stay' = AVERAGE(FactEncounter[LengthOfStayDays])
 		formatString: #,0.0
+		lineageTag: 52275a24-1472-47a8-8d30-82c9be85205c
 
 	measure 'Readmission Rate %' = DIVIDE(CALCULATE(COUNTROWS(FactEncounter), FactEncounter[IsReadmission] = TRUE()), COUNTROWS(FactEncounter))
 		formatString: 0.0%
+		lineageTag: 5ffac413-a819-47f9-b311-617b1393e412
 
 	measure 'Total Charges' = SUM(FactEncounter[TotalCharges])
 		formatString: \$#,0
+		lineageTag: cb83edf9-9cd7-46e4-94aa-9b29d163371b
 
 	column EncounterKey
 		dataType: int64
 		isHidden
-		summarizeBy: none
+		lineageTag: b6f018b6-657b-4b0c-b908-158c3bf1ebc5
+		summarizeBy: count
 		sourceColumn: EncounterKey
+
+		annotation SummarizationSetBy = Automatic
 
 	column DateKey
 		dataType: int64
+		lineageTag: c379a74c-8f06-4474-ad70-c24cc987f9b1
 		summarizeBy: none
 		sourceColumn: DateKey
 
 	column PatientKey
 		dataType: int64
-		summarizeBy: none
+		lineageTag: 43896f7a-241d-4c69-a70d-ad49f1633cd4
+		summarizeBy: count
 		sourceColumn: PatientKey
+
+		annotation SummarizationSetBy = Automatic
 
 	column ProviderKey
 		dataType: int64
-		summarizeBy: none
+		lineageTag: e30ef826-0caf-4b8d-868a-747562a72b74
+		summarizeBy: count
 		sourceColumn: ProviderKey
+
+		annotation SummarizationSetBy = Automatic
 
 	column DepartmentKey
 		dataType: int64
+		lineageTag: acc06219-53b7-42f9-b946-ca1def4b8776
 		summarizeBy: none
 		sourceColumn: DepartmentKey
 
 	column DiagnosisKey
 		dataType: int64
-		summarizeBy: none
+		lineageTag: 14b5eb2e-bedf-475b-9d7f-dfe3197ffe87
+		summarizeBy: count
 		sourceColumn: DiagnosisKey
+
+		annotation SummarizationSetBy = Automatic
 
 	column LengthOfStayDays
 		dataType: int64
+		lineageTag: 5f10f43b-ada5-452c-88dc-68c1d6a14c9a
 		summarizeBy: sum
 		sourceColumn: LengthOfStayDays
 
 	column IsReadmission
 		dataType: boolean
+		lineageTag: 40fe7c86-bcde-4c89-b19b-265ca7c9cc9a
 		summarizeBy: none
 		sourceColumn: IsReadmission
 
 	column TotalCharges
 		dataType: double
+		lineageTag: a928afb9-2170-4545-a47e-09c63acfe25f
 		summarizeBy: sum
 		sourceColumn: TotalCharges
 

@@ -1,42 +1,51 @@
 table DimDate
+	lineageTag: 2f55ef1b-085e-4016-9b88-ec4f035c17ab
 
 	column DateKey
 		dataType: int64
+		lineageTag: 5478d6e9-64c4-4846-b62c-f26c92961d9d
 		summarizeBy: none
 		sourceColumn: DateKey
 
 	column Date
 		dataType: string
+		lineageTag: 81e2dd58-693d-4995-89da-bd8b0aac206a
 		summarizeBy: none
 		sourceColumn: Date
 
 	column Year
 		dataType: int64
+		lineageTag: 3b8b343e-b048-48be-83b5-2ae2f0572ad7
 		summarizeBy: none
 		sourceColumn: Year
 
 	column Month
 		dataType: int64
+		lineageTag: 83f4b0b4-634f-4659-ba2f-ae8d9f470f20
 		summarizeBy: none
 		sourceColumn: Month
 
 	column MonthName
 		dataType: string
+		lineageTag: 3a8a1906-3ff2-4923-9e5c-076ce7831e04
 		summarizeBy: none
 		sourceColumn: MonthName
 
 	column Day
 		dataType: int64
+		lineageTag: 7b872ea1-f748-4076-9d41-ffb46ff6b0e5
 		summarizeBy: none
 		sourceColumn: Day
 
 	column DayOfWeek
 		dataType: string
+		lineageTag: 476ddf8b-1880-4fcc-a776-d166a2f9f656
 		summarizeBy: none
 		sourceColumn: DayOfWeek
 
 	column IsWeekend
 		dataType: boolean
+		lineageTag: f5003cf7-741f-43a1-b0cc-cdb2939f72ed
 		summarizeBy: none
 		sourceColumn: IsWeekend
 

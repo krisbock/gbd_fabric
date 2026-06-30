@@ -1,12 +1,15 @@
 table DimDepartment
+	lineageTag: e3187f89-209c-41f7-ac03-fbcebf49ce28
 
 	column DepartmentKey
 		dataType: int64
+		lineageTag: 13aa44e4-d1dd-425d-aade-8c218830a57b
 		summarizeBy: none
 		sourceColumn: DepartmentKey
 
 	column DepartmentName
 		dataType: string
+		lineageTag: bfcd42f9-79b2-4640-9d6e-867f8f9cb9d2
 		summarizeBy: none
 		sourceColumn: DepartmentName
 
